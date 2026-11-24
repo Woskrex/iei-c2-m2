@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="utf-8"><title>Operativos</title></head>
+<body>
+<h1>Operativos de esterilización y chipeo</h1>
+
+<section id="login">
+  <input id="rut" placeholder="RUT (12345678-9)">
+  <input id="clave" type="password" placeholder="Clave">
+  <button onclick="entrar()">Entrar</button>
+</section>
+
+<section id="app" hidden>
+  <button onclick="listar()">Ver operativos</button>
+
+  <section id="crear-operativo">
+    <h2>Crear operativo (HU-01)</h2>
+    <form id="form-operativo" onsubmit="crearOperativo(event)">
+      <input id="sedeId" placeholder="Sede (ej. SV-01)" required>
+      <input id="fechaHora" placeholder="Fecha ISO futura (ej. 2026-12-20T14:00:00.000Z)" required>
+      <input id="veterinarioRut" placeholder="RUT veterinario (ej. 15555555-6)" required>
+      <input id="cupoEst" type="number" min="0" value="5" placeholder="Cupos esterilización" required>
+      <input id="cupoChip" type="number" min="0" value="5" placeholder="Cupos microchip" required>
+      <button type="submit">Crear operativo</button>
+    </form>
+  </section>
+
+  <pre id="salida"></pre>
+</section>
+
+<script>
+const NUCLEO = 'https://nucleo-tr.onrender.com';
+let token = sessionStorage.getItem('token');
+
+async function entrar() {
+  const r = await fetch(NUCLEO + '/api/nucleo/sesiones', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ rut: rut.value, clave: clave.value })
+  });
+  const d = await r.json();
+  if (!r.ok) return alert(d.error ? d.error.mensaje : 'No se pudo iniciar sesión');
+  token = d.token;
+  sessionStorage.setItem('token', token);
+  mostrar();
+}
+
+function mostrar() {
+  login.hidden = true;
+  app.hidden = false;
+}
+
+async function api(metodo, ruta, cuerpo) {
+  const r = await fetch(ruta, {
+    method: metodo,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token
+    },
+    body: cuerpo ? JSON.stringify(cuerpo) : undefined
+  });
+  return { status: r.status, datos: await r.json() };
+}
+
+async function listar() {
+  const r = await api('GET', '/api/operativos/operativos');
+  salida.textContent = JSON.stringify(r, null, 2);
+}
+
+async function crearOperativo(event) {
+  event.preventDefault();
+
+  const cuerpo = {
+    sedeId: document.getElementById('sedeId').value.trim(),
+    fechaHora: document.getElementById('fechaHora').value.trim(),
+    veterinarioRut: document.getElementById('veterinarioRut').value.trim(),
+    cupos: {
+      esterilizacion: Number(document.getElementById('cupoEst').value),
+      microchip: Number(document.getElementById('cupoChip').value)
+    }
+  };
+
+  const res = await api('POST', '/api/operativos/operativos', cuerpo);
+  document.getElementById('salida').textContent = JSON.stringify(res, null, 2);
+}
+
+if (token) mostrar();
+</script>
+</body>
+</html>
