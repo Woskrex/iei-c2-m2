@@ -1,0 +1,27 @@
+{
+  "name": "iei-c2-m2",
+  "version": "1.0.0",
+  "description": "Fernando Villagran Rivera",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Woskrex/iei-c2-m2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Woskrex/iei-c2-m2/issues"
+  },
+  "homepage": "https://github.com/Woskrex/iei-c2-m2#readme",
+  "dependencies": {
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
+    "mongodb": "^7.9.1"
+  }
+}
