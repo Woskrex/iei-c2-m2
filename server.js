@@ -11,7 +11,6 @@ app.use(express.static('public'));
 // Cada integrante agrega aquí la línea de su ruta cuando suba su archivo
 app.use('/api/operativos/operativos', require('./src/rutas/operativos'));
 
-
 app.use((req, res) => error(res, 404, 'RUTA_NO_ENCONTRADA', 'No existe esa ruta'));
 app.use((err, req, res, next) => {
   if (err.type === 'entity.parse.failed') return error(res, 400, 'JSON_INVALIDO', 'El cuerpo no es un JSON válido');
