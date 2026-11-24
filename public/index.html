@@ -1,90 +1,129 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="utf-8"><title>Operativos</title></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operativos municipales</title>
+</head>
 <body>
-<h1>Operativos de esterilización y chipeo</h1>
+    <h1>Operativos de esterilización y chipeo</h1>
+    <section id="login">
+    <h2>Iniciar sesión</h2>
 
-<section id="login">
-  <input id="rut" placeholder="RUT (12345678-9)">
-  <input id="clave" type="password" placeholder="Clave">
-  <button onclick="entrar()">Entrar</button>
+    <input type="text" id="rut" placeholder="RUT">
+    <input type="password" id="clave" placeholder="Contraseña">
+
+    <button id="entrar">Entrar</button>
 </section>
 
-<section id="app" hidden>
-  <button onclick="listar()">Ver operativos</button>
+    <section id="consulta-operativos">
+        <h2>Consultar operativos disponibles</h2>
 
-  <section id="crear-operativo">
-    <h2>Crear operativo (HU-01)</h2>
-    <form id="form-operativo" onsubmit="crearOperativo(event)">
-      <input id="sedeId" placeholder="Sede (ej. SV-01)" required>
-      <input id="fechaHora" placeholder="Fecha ISO futura (ej. 2026-12-20T14:00:00.000Z)" required>
-      <input id="veterinarioRut" placeholder="RUT veterinario (ej. 15555555-6)" required>
-      <input id="cupoEst" type="number" min="0" value="5" placeholder="Cupos esterilización" required>
-      <input id="cupoChip" type="number" min="0" value="5" placeholder="Cupos microchip" required>
-      <button type="submit">Crear operativo</button>
-    </form>
-  </section>
+        <label for="sedeId">Sede:</label>
+        <input type="text" id="sedeId" placeholder="Ej: SV-01">
 
-  <pre id="salida"></pre>
-</section>
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha">
 
-<script>
-const NUCLEO = 'https://nucleo-tr.onrender.com';
-let token = sessionStorage.getItem('token');
+        <button id="buscar">Buscar operativos</button>
 
-async function entrar() {
-  const r = await fetch(NUCLEO + '/api/nucleo/sesiones', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ rut: rut.value, clave: clave.value })
-  });
-  const d = await r.json();
-  if (!r.ok) return alert(d.error ? d.error.mensaje : 'No se pudo iniciar sesión');
-  token = d.token;
-  sessionStorage.setItem('token', token);
-  mostrar();
-}
+        <h3>Resultados</h3>
+        <pre id="resultados"></pre>
+        <div>
+    <button id="anterior">Anterior</button>
+        <span id="paginaActual">Página 1</span>
+    <button id="siguiente">Siguiente</button>
+        </div>
+    </section>
+    <script>
+        const NUCLEO = 'https://nucleo-tr.onrender.com';
+        let token = sessionStorage.getItem('token');
+        let pagina = 1;
+        const limite = 5;
+        document.getElementById('entrar').addEventListener('click', async () => {
+        const rut = document.getElementById('rut').value;
+        const clave = document.getElementById('clave').value;
 
-function mostrar() {
-  login.hidden = true;
-  app.hidden = false;
-}
+    try {
+    const respuesta = await fetch(NUCLEO + '/api/nucleo/sesiones', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ rut, clave })
+    });
 
-async function api(metodo, ruta, cuerpo) {
-  const r = await fetch(ruta, {
-    method: metodo,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + token
-    },
-    body: cuerpo ? JSON.stringify(cuerpo) : undefined
-  });
-  return { status: r.status, datos: await r.json() };
-}
+    const datos = await respuesta.json();
 
-async function listar() {
-  const r = await api('GET', '/api/operativos/operativos');
-  salida.textContent = JSON.stringify(r, null, 2);
-}
-
-async function crearOperativo(event) {
-  event.preventDefault();
-
-  const cuerpo = {
-    sedeId: document.getElementById('sedeId').value.trim(),
-    fechaHora: document.getElementById('fechaHora').value.trim(),
-    veterinarioRut: document.getElementById('veterinarioRut').value.trim(),
-    cupos: {
-      esterilizacion: Number(document.getElementById('cupoEst').value),
-      microchip: Number(document.getElementById('cupoChip').value)
+    if (!respuesta.ok) {
+        alert(datos.error?.mensaje || 'No se pudo iniciar sesión');
+        return;
     }
-  };
 
-  const res = await api('POST', '/api/operativos/operativos', cuerpo);
-  document.getElementById('salida').textContent = JSON.stringify(res, null, 2);
+    token = datos.token;
+    sessionStorage.setItem('token', token);
+
+    alert('Inicio de sesión correcto');
+} catch (error) {
+    alert('No se pudo conectar con el núcleo');
+}
+});
+    async function buscarOperativos() {
+    document.getElementById('paginaActual').textContent = 'Página ' + pagina;
+    const sedeId = document.getElementById('sedeId').value;
+    const fecha = document.getElementById('fecha').value;
+
+    const parametros = new URLSearchParams();
+    parametros.set('page', pagina);
+    parametros.set('limit', limite);
+
+    if (sedeId) parametros.set('sedeId', sedeId);
+    if (fecha) parametros.set('fecha', fecha);
+
+    const ruta = '/api/operativos/operativos?' + parametros.toString();
+
+    try {
+        const respuesta = await fetch(ruta, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        });
+
+        const datos = await respuesta.json();
+        if (respuesta.ok) {
+    const totalPaginas = Math.max(1, Math.ceil(datos.total / limite));
+
+    document.getElementById('siguiente').disabled =
+        pagina >= totalPaginas;
+
+    document.getElementById('anterior').disabled =
+        pagina <= 1;
 }
 
-if (token) mostrar();
+        document.getElementById('resultados').textContent =
+            JSON.stringify(datos, null, 2);
+
+    } catch (error) {
+        document.getElementById('resultados').textContent =
+            'No se pudo conectar con la API de operativos';
+    }
+}
+
+document.getElementById('buscar').addEventListener('click', () => {
+    pagina = 1;
+    buscarOperativos();
+});
+document.getElementById('anterior').addEventListener('click', () => {
+    if (pagina > 1) {
+        pagina--;
+        buscarOperativos();
+    }
+});
+
+document.getElementById('siguiente').addEventListener('click', () => {
+    pagina++;
+    buscarOperativos();
+});
 </script>
 </body>
 </html>
