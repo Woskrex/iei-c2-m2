@@ -47,6 +47,47 @@ router.post('/', requiereToken, requierePerfil('funcionario'), ruta(async (req, 
   res.status(201).json(doc);
 }));
 
+module.exports = router;
+
+// HU-03: consultar operativos disponibles
+router.get('/', requiereToken, ruta(async (req, res) => {
+
+    const { page, limit, skip } = paginacion(req);
+
+    const filtro = { estado: 'abierto' };
+    // Filtrar por sede si el usuario indica una
+if (req.query.sedeId) {
+    filtro.sedeId = String(req.query.sedeId);
+}
+
+// Filtrar por fecha si el usuario indica una
+if (req.query.fecha) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(req.query.fecha))) {
+        return error(res, 400, 'FECHA_INVALIDA', 'Use el formato AAAA-MM-DD');
+    }
+
+    filtro.fechaHora = {
+        $gte: `${req.query.fecha}T00:00:00.000Z`,
+        $lte: `${req.query.fecha}T23:59:59.999Z`
+    };
+}
+
+const col = obtenerDb().collection('operativos');
+const datos = await col.find(filtro, { projection: { _id: 0 } })
+    .sort({ fechaHora: 1 })
+    .skip(skip)
+    .limit(limit)
+    .toArray();
+const total = await col.countDocuments(filtro);
+
+res.json({
+    page,
+    limit,
+    total,
+    datos
+});
+
+}));
 // HU-03: consultar operativos disponibles
 router.get('/', requiereToken, ruta(async (req, res) => {
 

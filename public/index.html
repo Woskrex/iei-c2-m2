@@ -1,129 +1,519 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operativos municipales</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operativos municipales</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 30px 20px;
+      font-family: Arial, sans-serif;
+      background: #eef3f9;
+      color: #263445;
+    }
+
+    h1 {
+      text-align: center;
+      color: #17365d;
+      margin-bottom: 35px;
+    }
+
+    h2 {
+      color: #174a7e;
+      margin-top: 0;
+    }
+
+    h3 {
+      color: #294d70;
+    }
+
+    section {
+      max-width: 850px;
+      margin: 20px auto;
+    }
+
+    #login,
+    #crear-operativo,
+    #consulta-operativos {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+      border: 1px solid #dce5ef;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0 15px;
+      border: 1px solid #ccd7e3;
+      border-radius: 7px;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input:focus {
+      border-color: #2684c7;
+      box-shadow: 0 0 4px rgba(38, 132, 199, 0.25);
+    }
+
+    label {
+      font-weight: bold;
+      color: #40566d;
+    }
+
+    button {
+      background: #1769aa;
+      color: white;
+      border: none;
+      padding: 11px 20px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    button:hover:not(:disabled) {
+      background: #104d80;
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      background: #aab8c6;
+      cursor: not-allowed;
+    }
+
+    form button {
+      width: 100%;
+      margin-top: 8px;
+      background: #16866a;
+    }
+
+    form button:hover:not(:disabled) {
+      background: #10664f;
+    }
+
+    #login {
+      max-width: 420px;
+      text-align: center;
+    }
+
+    #login button {
+      width: 100%;
+    }
+
+    #consulta-operativos button {
+      margin-top: 10px;
+    }
+
+    #resultados,
+    #salida {
+      background: #172b40;
+      color: #d9efff;
+      padding: 18px;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 13px;
+      min-height: 50px;
+    }
+
+    #paginaActual {
+      display: inline-block;
+      margin: 0 12px;
+      font-weight: bold;
+      color: #294d70;
+    }
+
+    #salida-operativo {
+      max-width: 850px;
+    }
+
+    #app {
+      padding-bottom: 30px;
+    }
+
+    /* Botón cerrar sesión */
+    #cerrar-sesion {
+      background: #c0392b;
+    }
+
+    #cerrar-sesion:hover {
+      background: #922b21;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 15px 10px;
+      }
+
+      #login,
+      #crear-operativo,
+      #consulta-operativos {
+        padding: 18px;
+      }
+
+      #paginaActual {
+        margin: 0 5px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <h1>Operativos de esterilización y chipeo</h1>
-    <section id="login">
+
+  <h1>Operativos de esterilización y chipeo</h1>
+
+  <!-- Inicio de sesión -->
+  <section id="login">
     <h2>Iniciar sesión</h2>
 
-    <input type="text" id="rut" placeholder="RUT">
-    <input type="password" id="clave" placeholder="Contraseña">
+    <input id="rut" placeholder="RUT (12345678-9)">
+    <input id="clave" type="password" placeholder="Contraseña">
 
-    <button id="entrar">Entrar</button>
-</section>
+    <button onclick="entrar()">Entrar</button>
+  </section>
 
-    <section id="consulta-operativos">
-        <h2>Consultar operativos disponibles</h2>
+  <!-- Aplicación -->
+  <section id="app" hidden>
 
-        <label for="sedeId">Sede:</label>
-        <input type="text" id="sedeId" placeholder="Ej: SV-01">
-
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha">
-
-        <button id="buscar">Buscar operativos</button>
-
-        <h3>Resultados</h3>
-        <pre id="resultados"></pre>
-        <div>
-    <button id="anterior">Anterior</button>
-        <span id="paginaActual">Página 1</span>
-    <button id="siguiente">Siguiente</button>
-        </div>
+    <!-- Cerrar sesión -->
+    <section style="text-align: right; margin-bottom: 15px;">
+      <button id="cerrar-sesion" onclick="cerrarSesion()">
+        Cerrar sesión
+      </button>
     </section>
-    <script>
-        const NUCLEO = 'https://nucleo-tr.onrender.com';
-        let token = sessionStorage.getItem('token');
-        let pagina = 1;
-        const limite = 5;
-        document.getElementById('entrar').addEventListener('click', async () => {
-        const rut = document.getElementById('rut').value;
-        const clave = document.getElementById('clave').value;
 
-    try {
-    const respuesta = await fetch(NUCLEO + '/api/nucleo/sesiones', {
-        method: 'POST',
-        headers: {
+    <!-- Crear operativo HU-01 -->
+    <section id="crear-operativo">
+      <h2>Crear operativo (HU-01)</h2>
+
+      <form id="form-operativo" onsubmit="crearOperativo(event)">
+
+        <input id="sedeIdCrear"
+          placeholder="Sede (ej. SV-01)"
+          required>
+
+        <input id="fechaHora"
+          placeholder="Fecha ISO futura (ej. 2026-12-20T14:00:00.000Z)"
+          required>
+
+        <input id="veterinarioRut"
+          placeholder="RUT veterinario (ej. 15555555-6)"
+          required>
+
+        <input id="cupoEst"
+          type="number"
+          min="0"
+          value="5"
+          placeholder="Cupos esterilización"
+          required>
+
+        <input id="cupoChip"
+          type="number"
+          min="0"
+          value="5"
+          placeholder="Cupos microchip"
+          required>
+
+        <button type="submit">Crear operativo</button>
+
+      </form>
+    </section>
+
+    <!-- Consultar operativos -->
+    <section id="consulta-operativos">
+
+      <h2>Consultar operativos disponibles</h2>
+
+      <label for="sedeIdConsulta">Sede:</label>
+      <input id="sedeIdConsulta" placeholder="Ej: SV-01">
+
+      <label for="fecha">Fecha:</label>
+      <input id="fecha" type="date">
+
+      <button onclick="buscar()">Buscar operativos</button>
+
+      <h3>Resultados</h3>
+
+      <pre id="resultados"></pre>
+
+      <!-- Paginación -->
+      <div>
+        <button id="anterior" onclick="paginaAnterior()" disabled>
+          Anterior
+        </button>
+
+        <span id="paginaActual">Página 1</span>
+
+        <button id="siguiente" onclick="paginaSiguiente()" disabled>
+          Siguiente
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Resultado de creación -->
+    <section id="salida-operativo">
+      <pre id="salida"></pre>
+    </section>
+
+  </section>
+
+  <script>
+
+    const NUCLEO = 'https://nucleo-tr.onrender.com';
+
+    let token = sessionStorage.getItem('token');
+
+    let pagina = 1;
+    const limite = 5;
+    let totalPaginas = 1;
+
+    // Iniciar sesión
+    async function entrar() {
+
+      try {
+
+        const r = await fetch(NUCLEO + '/api/nucleo/sesiones', {
+          method: 'POST',
+          headers: {
             'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ rut, clave })
-    });
-
-    const datos = await respuesta.json();
-
-    if (!respuesta.ok) {
-        alert(datos.error?.mensaje || 'No se pudo iniciar sesión');
-        return;
-    }
-
-    token = datos.token;
-    sessionStorage.setItem('token', token);
-
-    alert('Inicio de sesión correcto');
-} catch (error) {
-    alert('No se pudo conectar con el núcleo');
-}
-});
-    async function buscarOperativos() {
-    document.getElementById('paginaActual').textContent = 'Página ' + pagina;
-    const sedeId = document.getElementById('sedeId').value;
-    const fecha = document.getElementById('fecha').value;
-
-    const parametros = new URLSearchParams();
-    parametros.set('page', pagina);
-    parametros.set('limit', limite);
-
-    if (sedeId) parametros.set('sedeId', sedeId);
-    if (fecha) parametros.set('fecha', fecha);
-
-    const ruta = '/api/operativos/operativos?' + parametros.toString();
-
-    try {
-        const respuesta = await fetch(ruta, {
-            headers: {
-                Authorization: 'Bearer ' + token
-            }
+          },
+          body: JSON.stringify({
+            rut: document.getElementById('rut').value,
+            clave: document.getElementById('clave').value
+          })
         });
 
-        const datos = await respuesta.json();
-        if (respuesta.ok) {
-    const totalPaginas = Math.max(1, Math.ceil(datos.total / limite));
+        const d = await r.json();
 
-    document.getElementById('siguiente').disabled =
-        pagina >= totalPaginas;
+        if (!r.ok) {
+          return alert(d.error?.mensaje || 'No se pudo iniciar sesión');
+        }
 
-    document.getElementById('anterior').disabled =
-        pagina <= 1;
-}
+        token = d.token;
 
-        document.getElementById('resultados').textContent =
-            JSON.stringify(datos, null, 2);
+        sessionStorage.setItem('token', token);
 
-    } catch (error) {
-        document.getElementById('resultados').textContent =
-            'No se pudo conectar con la API de operativos';
+        mostrar();
+
+        alert('Inicio de sesión correcto');
+
+      } catch (error) {
+
+        alert('No se pudo conectar con el núcleo');
+
+      }
+
     }
-}
 
-document.getElementById('buscar').addEventListener('click', () => {
-    pagina = 1;
-    buscarOperativos();
-});
-document.getElementById('anterior').addEventListener('click', () => {
-    if (pagina > 1) {
+    // Mostrar aplicación
+    function mostrar() {
+
+      document.getElementById('login').hidden = true;
+      document.getElementById('app').hidden = false;
+
+    }
+
+    // Cerrar sesión
+    function cerrarSesion() {
+
+      sessionStorage.removeItem('token');
+
+      token = null;
+
+      pagina = 1;
+      totalPaginas = 1;
+
+      document.getElementById('app').hidden = true;
+      document.getElementById('login').hidden = false;
+
+      document.getElementById('rut').value = '';
+      document.getElementById('clave').value = '';
+
+      document.getElementById('sedeIdCrear').value = '';
+      document.getElementById('fechaHora').value = '';
+      document.getElementById('veterinarioRut').value = '';
+      document.getElementById('cupoEst').value = 5;
+      document.getElementById('cupoChip').value = 5;
+
+      document.getElementById('sedeIdConsulta').value = '';
+      document.getElementById('fecha').value = '';
+
+      document.getElementById('resultados').textContent = '';
+      document.getElementById('salida').textContent = '';
+
+      document.getElementById('paginaActual').textContent = 'Página 1';
+
+      document.getElementById('anterior').disabled = true;
+      document.getElementById('siguiente').disabled = true;
+
+      alert('Sesión cerrada correctamente');
+
+    }
+
+    // Función general para consumir la API
+    async function api(metodo, ruta, cuerpo) {
+
+      const r = await fetch(ruta, {
+        method: metodo,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token
+        },
+        body: cuerpo ? JSON.stringify(cuerpo) : undefined
+      });
+
+      return {
+        status: r.status,
+        datos: await r.json()
+      };
+
+    }
+
+    // Crear operativo HU-01
+    async function crearOperativo(event) {
+
+      event.preventDefault();
+
+      const cuerpo = {
+
+        sedeId: document.getElementById('sedeIdCrear').value.trim(),
+
+        fechaHora: document.getElementById('fechaHora').value.trim(),
+
+        veterinarioRut: document.getElementById('veterinarioRut').value.trim(),
+
+        cupos: {
+          esterilizacion: Number(document.getElementById('cupoEst').value),
+          microchip: Number(document.getElementById('cupoChip').value)
+        }
+
+      };
+
+      try {
+
+        const res = await api('POST', '/api/operativos/operativos', cuerpo);
+
+        document.getElementById('salida').textContent =
+          JSON.stringify(res, null, 2);
+
+      } catch (error) {
+
+        document.getElementById('salida').textContent =
+          'No se pudo conectar con la API de operativos';
+
+      }
+
+    }
+
+    // Buscar operativos disponibles
+    async function buscarOperativos() {
+
+      document.getElementById('paginaActual').textContent =
+        'Página ' + pagina;
+
+      const sedeId = document.getElementById('sedeIdConsulta').value.trim();
+
+      const fecha = document.getElementById('fecha').value;
+
+      const parametros = new URLSearchParams();
+
+      parametros.set('page', pagina);
+      parametros.set('limit', limite);
+
+      if (sedeId) parametros.set('sedeId', sedeId);
+      if (fecha) parametros.set('fecha', fecha);
+
+      const ruta = '/api/operativos/operativos?' + parametros.toString();
+
+      try {
+
+        const res = await api('GET', ruta);
+
+        if (res.status === 200) {
+
+          totalPaginas = Math.max(1, Math.ceil(res.datos.total / limite));
+
+          document.getElementById('siguiente').disabled =
+            pagina >= totalPaginas;
+
+          document.getElementById('anterior').disabled =
+            pagina <= 1;
+
+        } else {
+
+          document.getElementById('siguiente').disabled = true;
+          document.getElementById('anterior').disabled = true;
+
+        }
+
+        document.getElementById('resultados').textContent =
+          JSON.stringify(res, null, 2);
+
+      } catch (error) {
+
+        document.getElementById('resultados').textContent =
+          'No se pudo conectar con la API de operativos';
+
+      }
+
+    }
+
+    // Buscar desde la primera página
+    function buscar() {
+
+      pagina = 1;
+
+      buscarOperativos();
+
+    }
+
+    // Ir a la página anterior
+    function paginaAnterior() {
+
+      if (pagina > 1) {
+
         pagina--;
-        buscarOperativos();
-    }
-});
 
-document.getElementById('siguiente').addEventListener('click', () => {
-    pagina++;
-    buscarOperativos();
-});
-</script>
+        buscarOperativos();
+
+      }
+
+    }
+
+    // Ir a la página siguiente
+    function paginaSiguiente() {
+
+      if (pagina < totalPaginas) {
+
+        pagina++;
+
+        buscarOperativos();
+
+      }
+
+    }
+
+    // Mantener sesión si existe un token
+    if (token) {
+
+      mostrar();
+
+    }
+
+  </script>
+
 </body>
 </html>
