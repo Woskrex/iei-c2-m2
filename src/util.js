@@ -1,8 +1,7 @@
 function error(res, status, codigo, mensaje) {
 return res.status(status).json({ error: { codigo, mensaje } });
 }
-// Envuelve una función async para que sus errores lleguen al manejador 
-global
+// Envuelve una función async para que sus errores lleguen al manejador global
 const ruta = (fn) => (req, res, next) => Promise.resolve(fn(req, res, 
 next)).catch(next);
 function paginacion(req) {

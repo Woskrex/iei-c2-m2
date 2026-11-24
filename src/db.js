@@ -13,10 +13,8 @@ return db;
 // Genera identificadores como OP-000001 o I-000001
 async function siguienteId(prefijo) {
 const r = await obtenerDb().collection('contadores').findOneAndUpdate(
-{ _id: prefijo }, { $inc: { n: 1 } }, { upsert: true, returnDocument: 
-'after' });
-Page 8 of 28
-Guía paso a paso: prototipo ES3 (Módulo 2)
+{ _id: prefijo }, { $inc: { n: 1 } }, { upsert: true, returnDocument: 'after' });
+
 return `${prefijo}-${String(r.n).padStart(6, '0')}`;
 }
 module.exports = { conectar, obtenerDb, siguienteId };
