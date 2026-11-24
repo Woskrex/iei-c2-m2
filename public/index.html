@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operativos municipales</title>
+</head>
+<body>
+    <h1>Operativos de esterilización y chipeo</h1>
+
+    <section id="consulta-operativos">
+        <h2>Consultar operativos disponibles</h2>
+
+        <label for="sedeId">Sede:</label>
+        <input type="text" id="sedeId" placeholder="Ej: SV-01">
+
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha">
+
+        <button id="buscar">Buscar operativos</button>
+
+        <h3>Resultados</h3>
+        <pre id="resultados"></pre>
+    </section>
+    <script>
+    document.getElementById('buscar').addEventListener('click', async () => {
+        const sedeId = document.getElementById('sedeId').value;
+        const fecha = document.getElementById('fecha').value;
+
+        const parametros = new URLSearchParams();
+
+        if (sedeId) parametros.set('sedeId', sedeId);
+        if (fecha) parametros.set('fecha', fecha);
+
+        const ruta = '/api/operativos/operativos?' + parametros.toString();
+
+        document.getElementById('resultados').textContent = ruta;
+    });
+</script>
+</body>
+</html>
