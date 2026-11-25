@@ -1,0 +1,59 @@
+{
+  "seccion": "IEI-C1",
+  "modulo": 2,
+  "grupo": "G?",
+  "prototipo": "https://?.onrender.com",
+  "repositorio": "https://github.com/Woskrex/iei-c2-m2",
+  "taiga": "https://tree.taiga.io/project/yonah-ti3043-iei-c1-m2",
+  "integrantes": [
+    { "nombre": "Fernando Villagran", "github": "Nafe2001", "taiga": "Fernando Villagran", "rol": "Arquitecto" },
+    { "nombre": "Brian Burgos Martell", "github": "Woskrex", "taiga": "Brian Burgos Martell", "rol": "Analista" },
+    { "nombre": "Rodrigo Zepeda", "github": "RodrigoZepeda2480", "taiga": "Rodrigo Zepeda", "rol": "Product Owner" },
+    { "nombre": "Zahir Gallardo", "github": "ProfeZ7z", "taiga": "Zahir Gallardo", "rol": "Scrum Master" },
+    { "nombre": "Axel Muñoz", "github": "axelmtapia-cloud", "taiga": "Axel Antonio Muñoz Tapia", "rol": "Responsable de calidad" }
+  ],
+  "historias": [
+    {
+      "id": "HU-01", "titulo": "Crear operativo", "responsable": "Nafe2001",
+      "verificacion": {
+        "metodo": "POST", "ruta": "/api/operativos/operativos", "perfil": "funcionario",
+        "cuerpo": {
+          "sedeId": "SV-01", "fechaHora": "2026-12-20T14:00:00Z", "veterinarioRut": "15555555-6",
+          "cupos": { "esterilizacion": 5, "microchip": 5 }
+        },
+        "esperado": 201
+      }
+    },
+    {
+      "id": "HU-03", "titulo": "Consultar operativos disponibles", "responsable": "?",
+      "verificacion": {
+        "metodo": "GET", "ruta": "/api/operativos/operativos?sedeId=SV-01", "perfil": "vecino",
+        "esperado": 200
+      }
+    },
+    {
+      "id": "HU-04", "titulo": "Inscribir animal de un tutor", "responsable": "?",
+      "verificacion": {
+        "metodo": "POST", "ruta": "/api/operativos/inscripciones", "perfil": "vecino",
+        "cuerpo": { "operativoId": "OP-000001", "animalId": "SIM-000001", "servicios": ["esterilizacion"] },
+        "esperado": 201
+      }
+    },
+    {
+      "id": "HU-06", "titulo": "Cancelar inscripción", "responsable": "?",
+      "verificacion": {
+        "metodo": "PATCH", "ruta": "/api/operativos/inscripciones/I-000002", "perfil": "vecino",
+        "cuerpo": { "estado": "cancelada" },
+        "esperado": 200
+      }
+    },
+    {
+      "id": "HU-09", "titulo": "Registrar asistencia y resultado", "responsable": "axelmtapia-cloud",
+      "verificacion": {
+        "metodo": "POST", "ruta": "/api/operativos/atenciones", "perfil": "veterinario",
+        "cuerpo": { "inscripcionId": "I-000001", "resultado": "Sin complicaciones" },
+        "esperado": 201
+      }
+    }
+  ]
+}
