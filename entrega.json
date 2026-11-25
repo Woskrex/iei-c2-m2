@@ -32,7 +32,7 @@
       }
     },
     {
-      "id": "HU-04", "titulo": "Inscribir animal de un tutor", "responsable": "?",
+      "id": "HU-04", "titulo": "Inscribir animal de un tutor", "responsable": "ProfeZ7z",
       "verificacion": {
         "metodo": "POST", "ruta": "/api/operativos/inscripciones", "perfil": "vecino",
         "cuerpo": { "operativoId": "OP-000001", "animalId": "SIM-000001", "servicios": ["esterilizacion"] },
@@ -40,7 +40,7 @@
       }
     },
     {
-      "id": "HU-06", "titulo": "Cancelar inscripción", "responsable": "?",
+      "id": "HU-06", "titulo": "Cancelar inscripción", "responsable": "RodrigoZepeda2480",
       "verificacion": {
         "metodo": "PATCH", "ruta": "/api/operativos/inscripciones/I-000002", "perfil": "vecino",
         "cuerpo": { "estado": "cancelada" },
