@@ -1,7 +1,7 @@
 {
   "seccion": "IEI-C1",
   "modulo": 2,
-  "grupo": 02,
+  "grupo": "02",
   "prototipo": "https://iei-c2-m2.onrender.com",
   "repositorio": "https://github.com/Woskrex/iei-c2-m2",
   "taiga": "https://tree.taiga.io/project/yonah-ti3043-iei-c1-m2",
