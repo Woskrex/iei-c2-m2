@@ -25,7 +25,7 @@
       }
     },
     {
-      "id": "HU-03", "titulo": "Consultar operativos disponibles", "responsable": "woskrex",
+      "id": "HU-03", "titulo": "Consultar operativos disponibles", "responsable": "Woskrex",
       "verificacion": {
         "metodo": "GET", "ruta": "/api/operativos/operativos?sedeId=SV-01", "perfil": "vecino",
         "esperado": 200
