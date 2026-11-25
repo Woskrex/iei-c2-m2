@@ -12,6 +12,7 @@ app.use(express.static('public'));
 app.use('/api/operativos/operativos', require('./src/rutas/operativos'));
 app.use('/api/operativos/atenciones', require('./src/rutas/atenciones'));
 app.use('/api/operativos/inscripciones', require('./src/rutas/inscripciones-crear'));
+app.use('/api/operativos/inscripciones', require('./src/rutas/inscripciones-estado'));
 
 app.use((req, res) => error(res, 404, 'RUTA_NO_ENCONTRADA', 'No existe esa ruta'));
 app.use((err, req, res, next) => {
@@ -23,4 +24,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 conectar()
   .then(() => app.listen(PORT, () => console.log(`Escuchando en ${PORT}`)))
-  .catch(() => { console.error('No se pudo conectar a MongoDB'); process.exit(1); });
+  .catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
