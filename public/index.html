@@ -262,6 +262,21 @@
       </div>
 
     </section>
+    <!-- Inscribir animal HU-04 -->
+<section id="inscribir-animal" style="background:white;padding:25px;border-radius:12px;border:1px solid #dce5ef;">
+  <h2>Inscribir animal (HU-04)</h2>
+  <form onsubmit="inscribirAnimal(event)">
+    <input id="operativoIdInsc" placeholder="Operativo (ej. OP-000001)" required>
+    <input id="animalIdInsc" placeholder="Animal (ej. SIM-000001)" required>
+    <select id="serviciosInsc" style="width:100%;padding:12px;margin:8px 0 15px;">
+      <option value="esterilizacion">Esterilización</option>
+      <option value="microchip">Microchip</option>
+      <option value="ambos">Ambos</option>
+    </select>
+    <button type="submit">Inscribir</button>
+  </form>
+  <pre id="salida-inscripcion"></pre>
+</section>
 
     <!-- Resultado de creación -->
     <section id="salida-operativo">
@@ -505,7 +520,21 @@
       }
 
     }
-
+async function inscribirAnimal(event) {
+  event.preventDefault();
+  const s = document.getElementById('serviciosInsc').value;
+  const cuerpo = {
+    operativoId: document.getElementById('operativoIdInsc').value.trim(),
+    animalId: document.getElementById('animalIdInsc').value.trim(),
+    servicios: s === 'ambos' ? ['esterilizacion', 'microchip'] : [s]
+  };
+  try {
+    const res = await api('POST', '/api/operativos/inscripciones', cuerpo);
+    document.getElementById('salida-inscripcion').textContent = JSON.stringify(res, null, 2);
+  } catch (e) {
+    document.getElementById('salida-inscripcion').textContent = 'No se pudo conectar con la API de operativos';
+  }
+}
     // Mantener sesión si existe un token
     if (token) {
 
