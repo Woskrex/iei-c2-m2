@@ -60,7 +60,7 @@ router.post('/', requiereToken, requierePerfil('funcionario'), ruta(async (req, 
 }));
 
 
-// HU-03: consultar operativos disponibles
+//  HU-03: consultar operativos disponibles
 router.get('/', requiereToken, ruta(async (req, res) => {
     const { page, limit, skip } = paginacion(req);
 
