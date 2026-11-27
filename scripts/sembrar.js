@@ -38,8 +38,8 @@ async function sembrar() {
   };
   await db.collection('inscripciones').insertMany([
     { ...base, inscripcionId: 'I-000001', animalId: 'SIM-000002', estado: 'confirmada' }, // HU-09
-    { ...base, inscripcionId: 'I-000002', animalId: 'SIM-000003', estado: 'solicitada' }, // HU-06
-    { ...base, inscripcionId: 'I-000003', animalId: 'SIM-000004', estado: 'solicitada' }  // HU-08
+    { ...base, inscripcionId: 'I-000002', animalId: 'SIM-000008', estado: 'solicitada' }, // HU-06 (Garfield, de 11111111-1)
+    { ...base, inscripcionId: 'I-000003', animalId: 'SIM-000003', solicitanteRut: '12222222-5', estado: 'solicitada' }  // HU-08 (Rocky, de 12222222-5)
   ]);
 
   // 4. Contadores: el siguiente id que se genere continúa desde aquí
