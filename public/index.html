@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,172 +6,177 @@
   <title>Operativos municipales</title>
 
   <style>
-    * {
-      box-sizing: border-box;
+    * { box-sizing: border-box; }
+
+    :root {
+      --azul: #1769aa;
+      --azul-oscuro: #17365d;
+      --verde: #16866a;
+      --borde: #dce5ef;
+      --fondo: #eef3f9;
     }
 
     body {
       margin: 0;
-      padding: 30px 20px;
-      font-family: Arial, sans-serif;
-      background: #eef3f9;
+      padding: 0 16px 40px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--fondo);
       color: #263445;
+      line-height: 1.45;
     }
 
-    h1 {
+    /* Encabezado */
+    header.portada {
+      background: var(--azul-oscuro);
+      color: white;
+      margin: 0 -16px 28px;
+      padding: 22px 16px;
       text-align: center;
-      color: #17365d;
-      margin-bottom: 35px;
     }
+    header.portada h1 { margin: 0; font-size: 1.5rem; }
+    header.portada p { margin: 6px 0 0; font-size: .9rem; opacity: .8; }
 
-    h2 {
-      color: #174a7e;
-      margin-top: 0;
-    }
+    h2 { color: #174a7e; margin: 0 0 16px; font-size: 1.15rem; }
+    h3 { color: #294d70; margin: 18px 0 8px; font-size: 1rem; }
 
-    h3 {
-      color: #294d70;
-    }
+    section { max-width: 760px; margin: 0 auto 20px; }
 
-    section {
-      max-width: 850px;
-      margin: 20px auto;
-    }
-
-    #login,
-    #crear-operativo,
-    #consulta-operativos {
+    /* Tarjetas */
+    #login, #crear-operativo, #consulta-operativos, #inscribir-animal,
+    #gestionar-inscripcion, #registrar-atencion {
       background: white;
-      padding: 25px;
+      padding: 24px;
       border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
-      border: 1px solid #dce5ef;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, .07);
+      border: 1px solid var(--borde);
     }
 
-    input {
+    /* Etiqueta de historia de usuario */
+    .chip {
+      display: inline-block;
+      background: #e3f0fb;
+      color: var(--azul);
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      vertical-align: middle;
+      margin-left: 8px;
+    }
+
+    /* Campos */
+    input, select {
       width: 100%;
-      padding: 12px;
-      margin: 8px 0 15px;
+      padding: 11px 12px;
+      margin: 6px 0 14px;
       border: 1px solid #ccd7e3;
       border-radius: 7px;
       font-size: 14px;
+      font-family: inherit;
+      background: white;
       outline: none;
-      transition: border 0.2s;
+      transition: border .2s, box-shadow .2s;
     }
-
-    input:focus {
+    input:focus, select:focus {
       border-color: #2684c7;
-      box-shadow: 0 0 4px rgba(38, 132, 199, 0.25);
+      box-shadow: 0 0 4px rgba(38, 132, 199, .25);
     }
+    label { font-weight: 600; color: #40566d; font-size: .9rem; }
 
-    label {
-      font-weight: bold;
-      color: #40566d;
-    }
+    .fila { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
+    /* Botones */
     button {
-      background: #1769aa;
+      background: var(--azul);
       color: white;
       border: none;
       padding: 11px 20px;
       border-radius: 7px;
       cursor: pointer;
       font-size: 14px;
-      font-weight: bold;
-      transition: background 0.2s, transform 0.2s;
+      font-weight: 600;
+      transition: background .2s, transform .2s;
     }
+    button:hover:not(:disabled) { background: #104d80; transform: translateY(-1px); }
+    button:disabled { background: #aab8c6; cursor: not-allowed; }
 
-    button:hover:not(:disabled) {
-      background: #104d80;
-      transform: translateY(-1px);
+    form button { width: 100%; margin-top: 4px; background: var(--verde); }
+    form button:hover:not(:disabled) { background: #10664f; }
+
+    /* Login */
+    #login { max-width: 400px; text-align: center; }
+    #login button { width: 100%; }
+
+    /* Barra superior de sesión */
+    #barra {
+      max-width: 760px;
+      margin: 0 auto 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      border: 1px solid var(--borde);
+      border-radius: 10px;
+      padding: 10px 16px;
     }
+    #perfil-actual { font-size: .9rem; color: #40566d; }
+    #cerrar-sesion { background: #c0392b; padding: 8px 14px; }
+    #cerrar-sesion:hover { background: #922b21 !important; }
 
-    button:disabled {
-      background: #aab8c6;
-      cursor: not-allowed;
-    }
-
-    form button {
-      width: 100%;
-      margin-top: 8px;
-      background: #16866a;
-    }
-
-    form button:hover:not(:disabled) {
-      background: #10664f;
-    }
-
-    #login {
-      max-width: 420px;
-      text-align: center;
-    }
-
-    #login button {
-      width: 100%;
-    }
-
-    #consulta-operativos button {
-      margin-top: 10px;
-    }
-
-    #resultados,
-    #salida {
+    /* Resultados */
+    pre {
       background: #172b40;
       color: #d9efff;
-      padding: 18px;
+      padding: 16px;
       border-radius: 8px;
       overflow-x: auto;
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       font-size: 13px;
-      min-height: 50px;
+      margin: 14px 0 0;
     }
+    pre:empty { display: none; }
 
-    #paginaActual {
-      display: inline-block;
-      margin: 0 12px;
-      font-weight: bold;
-      color: #294d70;
+    /* Paginación */
+    #paginacion {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; margin-top: 14px;
     }
+    #paginaActual { font-weight: 700; color: #294d70; }
+    #consulta-operativos > button { width: 100%; }
 
-    #salida-operativo {
-      max-width: 850px;
-    }
-
+    /* Panel principal: tarjetas lado a lado */
     #app {
-      padding-bottom: 30px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      align-items: start;
     }
+    #app[hidden] { display: none; }
+    #app > section { max-width: none; margin: 0; }
+    #app > #barra { grid-column: 1 / -1; max-width: none; margin: 0; }
 
-    /* Botón cerrar sesión */
-    #cerrar-sesion {
-      background: #c0392b;
-    }
-
-    #cerrar-sesion:hover {
-      background: #922b21;
+    @media (max-width: 860px) {
+      #app { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 600px) {
-      body {
-        padding: 15px 10px;
-      }
-
-      #login,
-      #crear-operativo,
-      #consulta-operativos {
-        padding: 18px;
-      }
-
-      #paginaActual {
-        margin: 0 5px;
-      }
+      .fila { grid-template-columns: 1fr; }
+      #login, #crear-operativo, #consulta-operativos, #inscribir-animal,
+      #gestionar-inscripcion, #registrar-atencion { padding: 18px; }
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Operativos de esterilización y chipeo</h1>
+  <header class="portada">
+    <h1>Operativos de esterilización y chipeo</h1>
+    <p>Sistema municipal de tenencia responsable de mascotas · Módulo 2</p>
+  </header>
 
   <!-- Inicio de sesión -->
   <section id="login">
@@ -187,49 +191,13 @@
   <!-- Aplicación -->
   <section id="app" hidden>
 
-    <!-- Cerrar sesión -->
-    <section style="text-align: right; margin-bottom: 15px;">
-      <button id="cerrar-sesion" onclick="cerrarSesion()">
-        Cerrar sesión
-      </button>
-    </section>
+    <!-- Barra de sesión -->
+    <div id="barra">
+      <span id="perfil-actual">Sesión iniciada</span>
+      <button id="cerrar-sesion" onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
 
-    <!-- Crear operativo HU-01 -->
-    <section id="crear-operativo">
-      <h2>Crear operativo (HU-01)</h2>
 
-      <form id="form-operativo" onsubmit="crearOperativo(event)">
-
-        <input id="sedeIdCrear"
-          placeholder="Sede (ej. SV-01)"
-          required>
-
-        <input id="fechaHora"
-          placeholder="Fecha ISO futura (ej. 2026-12-20T14:00:00.000Z)"
-          required>
-
-        <input id="veterinarioRut"
-          placeholder="RUT veterinario (ej. 15555555-6)"
-          required>
-
-        <input id="cupoEst"
-          type="number"
-          min="0"
-          value="5"
-          placeholder="Cupos esterilización"
-          required>
-
-        <input id="cupoChip"
-          type="number"
-          min="0"
-          value="5"
-          placeholder="Cupos microchip"
-          required>
-
-        <button type="submit">Crear operativo</button>
-
-      </form>
-    </section>
 
     <!-- Consultar operativos -->
     <section id="consulta-operativos">
@@ -249,7 +217,7 @@
       <pre id="resultados"></pre>
 
       <!-- Paginación -->
-      <div>
+      <div id="paginacion">
         <button id="anterior" onclick="paginaAnterior()" disabled>
           Anterior
         </button>
@@ -262,13 +230,59 @@
       </div>
 
     </section>
+
+    <!-- Crear operativo HU-01 -->
+    <section id="crear-operativo">
+      <h2>Crear operativo<span class="chip">HU-01</span></h2>
+
+      <form id="form-operativo" onsubmit="crearOperativo(event)">
+
+        <input id="sedeIdCrear"
+          placeholder="Sede (ej. SV-01)"
+          required>
+
+        <input id="fechaHora"
+          placeholder="Fecha ISO futura (ej. 2026-12-20T14:00:00.000Z)"
+          required>
+
+        <input id="veterinarioRut"
+          placeholder="RUT veterinario (ej. 15555555-6)"
+          required>
+
+        <div class="fila">
+        <input id="cupoEst"
+          type="number"
+          min="0"
+          value="5"
+          placeholder="Cupos esterilización"
+          required>
+
+        <input id="cupoChip"
+          type="number"
+          min="0"
+          value="5"
+          placeholder="Cupos microchip"
+          required>
+        </div>
+
+        <button type="submit">Crear operativo</button>
+
+      </form>
+      <!-- Resultado de creación (dentro de su sección) -->
+      <pre id="salida"></pre>
+    </section>
+
+
+
+
+
     <!-- Inscribir animal HU-04 -->
-<section id="inscribir-animal" style="background:white;padding:25px;border-radius:12px;border:1px solid #dce5ef;">
-  <h2>Inscribir animal (HU-04)</h2>
+<section id="inscribir-animal">
+  <h2>Inscribir animal<span class="chip">HU-04</span></h2>
   <form onsubmit="inscribirAnimal(event)">
     <input id="operativoIdInsc" placeholder="Operativo (ej. OP-000001)" required>
     <input id="animalIdInsc" placeholder="Animal (ej. SIM-000001)" required>
-    <select id="serviciosInsc" style="width:100%;padding:12px;margin:8px 0 15px;">
+    <select id="serviciosInsc">
       <option value="esterilizacion">Esterilización</option>
       <option value="microchip">Microchip</option>
       <option value="ambos">Ambos</option>
@@ -278,10 +292,37 @@
   <pre id="salida-inscripcion"></pre>
 </section>
 
-    <!-- Resultado de creación -->
-    <section id="salida-operativo">
-      <pre id="salida"></pre>
+
+
+    <!-- Cancelar / confirmar inscripción HU-06 / HU-08 -->
+    <section id="gestionar-inscripcion">
+      <h2>Cancelar o confirmar inscripción<span class="chip">HU-06 / HU-08</span></h2>
+      <form onsubmit="cambiarEstado(event)">
+        <input id="inscripcionIdEstado" placeholder="Inscripción (ej. I-000001)" required>
+        <select id="nuevoEstado">
+          <option value="cancelada">Cancelar (tutor o funcionario)</option>
+          <option value="confirmada">Confirmar (solo funcionario)</option>
+        </select>
+        <button type="submit">Aplicar</button>
+      </form>
+      <pre id="salida-estado"></pre>
     </section>
+
+
+
+    <!-- Registrar atención HU-09 -->
+    <section id="registrar-atencion">
+      <h2>Registrar atención<span class="chip">HU-09</span></h2>
+      <form onsubmit="registrarAtencion(event)">
+        <input id="inscripcionIdAt" placeholder="Inscripción confirmada (ej. I-000001)" required>
+        <input id="resultadoAt" placeholder="Resultado (ej. Sin complicaciones)" required>
+        <input id="microchipAt" placeholder="Microchip de 15 dígitos (solo si el servicio lo incluye)">
+        <input id="controlAt" placeholder="Control recomendado ISO 8601 (opcional)">
+        <button type="submit">Registrar</button>
+      </form>
+      <pre id="salida-atencion"></pre>
+    </section>
+
 
   </section>
 
@@ -338,6 +379,7 @@
 
       document.getElementById('login').hidden = true;
       document.getElementById('app').hidden = false;
+      ajustarPorPerfil();
 
     }
 
@@ -535,6 +577,63 @@ async function inscribirAnimal(event) {
     document.getElementById('salida-inscripcion').textContent = 'No se pudo conectar con la API de operativos';
   }
 }
+    // Perfil -> secciones visibles (la seguridad real sigue en el servidor)
+    const SECCIONES = {
+      funcionario: ['crear-operativo', 'consulta-operativos', 'gestionar-inscripcion'],
+      vecino: ['consulta-operativos', 'inscribir-animal', 'gestionar-inscripcion'],
+      comunitario: ['consulta-operativos', 'inscribir-animal', 'gestionar-inscripcion'],
+      veterinario: ['consulta-operativos', 'registrar-atencion']
+    };
+    const TODAS = ['crear-operativo', 'consulta-operativos', 'inscribir-animal',
+      'gestionar-inscripcion', 'registrar-atencion'];
+
+    async function ajustarPorPerfil() {
+      try {
+        const r = await fetch(NUCLEO + '/api/nucleo/sesiones/actual', {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (!r.ok) return;
+        const u = await r.json();
+        const visibles = SECCIONES[u.perfil] || TODAS;
+        document.getElementById('perfil-actual').textContent = u.rut + ' · ' + u.perfil;
+        TODAS.forEach((id) => {
+          document.getElementById(id).hidden = !visibles.includes(id);
+        });
+      } catch (e) { /* si falla, se muestra todo y el servidor responde 403 */ }
+    }
+
+    // HU-06 / HU-08
+    async function cambiarEstado(event) {
+      event.preventDefault();
+      const id = document.getElementById('inscripcionIdEstado').value.trim();
+      try {
+        const res = await api('PATCH', '/api/operativos/inscripciones/' + encodeURIComponent(id),
+          { estado: document.getElementById('nuevoEstado').value });
+        document.getElementById('salida-estado').textContent = JSON.stringify(res, null, 2);
+      } catch (e) {
+        document.getElementById('salida-estado').textContent = 'No se pudo conectar con la API de operativos';
+      }
+    }
+
+    // HU-09
+    async function registrarAtencion(event) {
+      event.preventDefault();
+      const cuerpo = {
+        inscripcionId: document.getElementById('inscripcionIdAt').value.trim(),
+        resultado: document.getElementById('resultadoAt').value.trim()
+      };
+      const chip = document.getElementById('microchipAt').value.trim();
+      const control = document.getElementById('controlAt').value.trim();
+      if (chip) cuerpo.microchip = chip;
+      if (control) cuerpo.fechaControlRecomendada = control;
+      try {
+        const res = await api('POST', '/api/operativos/atenciones', cuerpo);
+        document.getElementById('salida-atencion').textContent = JSON.stringify(res, null, 2);
+      } catch (e) {
+        document.getElementById('salida-atencion').textContent = 'No se pudo conectar con la API de operativos';
+      }
+    }
+
     // Mantener sesión si existe un token
     if (token) {
 

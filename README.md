@@ -68,5 +68,5 @@ Errores con el formato `{"error": {"codigo", "mensaje"}}`. Sin token responde 40
 | HU-01 Crear operativo | Fernando Villagran | Funciona |
 | HU-03 Consultar operativos | Brian Burgos | Funciona |
 | HU-04 Inscribir animal | Zahir Gallardo | Funciona |
-| HU-06 Cancelar y HU-08 Confirmar | Rodrigo Zepeda | Completar según el estado real |
+| HU-06 Cancelar y HU-08 Confirmar | Rodrigo Zepeda | Funciona |
 | HU-09 Registrar atención | Axel Muñoz | Funciona |

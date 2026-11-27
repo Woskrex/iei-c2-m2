@@ -1,4 +1,3 @@
-
 const express = require('express');
 const { requiereToken, requierePerfil } = require('../auth');
 const { obtenerDb, siguienteId } = require('../db');
@@ -69,7 +68,14 @@ router.get('/', requiereToken, ruta(async (req, res) => {
 
     // Filtrar por sede si el usuario indica una
     if (req.query.sedeId) {
-        filtro.sedeId = String(req.query.sedeId);
+        const sedeId = String(req.query.sedeId);
+
+        // Si la sede no existe en el catálogo del núcleo, es un 404
+        if (!(await sedeExiste(sedeId))) {
+            return error(res, 404, 'SEDE_NO_ENCONTRADA', 'La sede no existe en el catálogo');
+        }
+
+        filtro.sedeId = sedeId;
     }
 
     // Filtrar por fecha si el usuario indica una
@@ -102,6 +108,18 @@ router.get('/', requiereToken, ruta(async (req, res) => {
         total,
         datos
     });
+}));
+
+// Consultar un operativo por id (404 si no existe)
+router.get('/:operativoId', requiereToken, ruta(async (req, res) => {
+    const op = await obtenerDb().collection('operativos').findOne(
+        { operativoId: String(req.params.operativoId) },
+        { projection: { _id: 0 } }
+    );
+
+    if (!op) return error(res, 404, 'OPERATIVO_NO_ENCONTRADO', 'El operativo no existe');
+
+    res.json(op);
 }));
 
 module.exports = router;
